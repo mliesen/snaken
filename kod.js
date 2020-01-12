@@ -1,20 +1,18 @@
-interface Pos {
-    x: number;
-    y: number;
-}
-enum Riktning { upp, höger, neråt, vänster }
-
-let drawInfo = {
+var Riktning;
+(function (Riktning) {
+    Riktning[Riktning["upp"] = 0] = "upp";
+    Riktning[Riktning["h\u00F6ger"] = 1] = "h\u00F6ger";
+    Riktning[Riktning["ner\u00E5t"] = 2] = "ner\u00E5t";
+    Riktning[Riktning["v\u00E4nster"] = 3] = "v\u00E4nster";
+})(Riktning || (Riktning = {}));
+var drawInfo = {
     cellW: 15,
     cellH: 15,
     cellStartX: 0,
     cellStartY: 0
-}
-
-class Mask {
-    ps: Pos[];   // index=0 huvud
-    rik: Riktning;
-    constructor(startpos: Pos, riktning: Riktning) {
+};
+var Mask = /** @class */ (function () {
+    function Mask(startpos, riktning) {
         this.ps = [startpos];
         this.ps.push({ x: startpos.x - 1, y: startpos.y });
         this.ps.push({ x: startpos.x - 2, y: startpos.y });
@@ -23,16 +21,17 @@ class Mask {
         this.ps.push({ x: startpos.x - 4, y: startpos.y + 1 });
         this.rik = riktning;
     }
-    Draw(context: CanvasRenderingContext2D) {
+    Mask.prototype.Draw = function (context) {
         for (var i = 0; i < this.ps.length; i++) {
-            let p = this.ps[i];
+            var p = this.ps[i];
             context.beginPath();
-            let x = drawInfo.cellStartX + p.x * drawInfo.cellW;
-            let y = drawInfo.cellStartY + p.y * drawInfo.cellH;
+            var x = drawInfo.cellStartX + p.x * drawInfo.cellW;
+            var y = drawInfo.cellStartY + p.y * drawInfo.cellH;
             context.rect(x, y, drawInfo.cellW, drawInfo.cellH);
             if (i === 0) {
                 context.fillStyle = 'green';
-            } else {
+            }
+            else {
                 context.fillStyle = 'blue';
             }
             context.fill();
@@ -40,24 +39,19 @@ class Mask {
             context.strokeStyle = 'red';
             context.stroke();
         }
-    }
-}
-class Frukt {
-    pos: Pos;
-    constructor(startpos: Pos) {
+    };
+    return Mask;
+}());
+var Frukt = /** @class */ (function () {
+    function Frukt(startpos) {
         this.pos = startpos;
     }
-    Draw(context: CanvasRenderingContext2D) {
-
-    }
-}
-
-class World {
-    width: number;
-    height: number;
-    maskar: Mask[];
-    frukter: Frukt[];
-    constructor(players: number, width: number, height: number) {
+    Frukt.prototype.Draw = function (context) {
+    };
+    return Frukt;
+}());
+var World = /** @class */ (function () {
+    function World(players, width, height) {
         this.width = width;
         this.height = height;
         if (players === 1) {
@@ -72,21 +66,21 @@ class World {
             ];
         }
     }
-    Draw(context: CanvasRenderingContext2D) {
+    World.prototype.Draw = function (context) {
         // Töm spelplanen
         context.beginPath();
         context.rect(0, 0, 900, 300);
         context.fillStyle = 'black';
         context.fill();
         // Rita maskarna
-        for (var m of this.maskar) {
+        for (var _i = 0, _a = this.maskar; _i < _a.length; _i++) {
+            var m = _a[_i];
             m.Draw(context);
         }
-
-    }
-}
-
+    };
+    return World;
+}());
 var W = new World(1, 60, 20);
-var canvas = <HTMLCanvasElement>document.getElementById('myCanvas');
-var context: CanvasRenderingContext2D = canvas.getContext('2d');
+var canvas = document.getElementById('myCanvas');
+var context = canvas.getContext('2d');
 W.Draw(context);
